@@ -115,6 +115,7 @@ class Initial_IO:
 
     def write_output(self, info=""):
         output = f"Output:\n{info}"
+        self.output_text.delete("1.0", END)
         self.output_text.insert(END, str(output))
         
 
@@ -194,6 +195,8 @@ class Initial_IO:
                 self.open_file(decrypted_save_path, "w", plain_text)
                 self.write_error(f"Successfully decrypted to {decrypted_save_path}.")
             except IndexError:
+                self.write_error("Error: Invalid encrypted file")
+            except ValueError:
                 self.write_error("Error: Invalid encrypted file")
 
 
