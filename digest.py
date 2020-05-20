@@ -12,3 +12,7 @@ def decode(input_int):
     """Decode decimal to text."""
     output_str = str(codecs.decode(str(hex(input_int))[2:], "hex"))
     return output_str[2:len(output_str) - 1]
+
+
+if __name__ == "__main__":
+    print("Please use via UI.py")

@@ -1,3 +1,5 @@
+# pylint: disable-msg=invalid-name
+
 """Create crypto object and encrypt plain encoded text."""
 
 
@@ -7,7 +9,9 @@ from sys import exit
 
 class Crypto_item:
     """Create random keys if no arguments are provided."""
+
     def __init__(self, p=0, q=0):
+        """Initiate creation of keys."""
         def open_file_read(filename):
             """Read file."""
             try:
@@ -16,7 +20,6 @@ class Crypto_item:
                 open_file.close()
             except FileNotFoundError:
                 return False
-
 
         # Assign to self
         self.p = p
@@ -39,11 +42,11 @@ class Crypto_item:
             self.q = self.get_prime()
             while self.q == self.p:
                 self.q = self.get_prime()
-        
+
         self.keys = self.create_keys()
 
-
     # File opening manager
+
     def open_file_read(self, filename):
         """Read file."""
         try:
@@ -53,14 +56,16 @@ class Crypto_item:
         except FileNotFoundError:
             return False
 
-    # Select random prime from list        
+    # Select random prime from list
+
     def get_prime(self):
         """Get list of primes from file made using sage."""
         return int(self.primes[randint(0, len(self.primes) - 1)])
 
-
     # Create crypto objects (keys)
+
     def create_keys(self):
+        """Create key math."""
         def coprime(phi):
             while True:
                 r = self.get_prime()
@@ -69,9 +74,8 @@ class Crypto_item:
                         break
             return r
 
-
         def mod_inv(a, m):
-
+            """Get modInv."""
             def egcd(a, b):
                 """Get GCD."""
                 if a == 0:
@@ -79,8 +83,7 @@ class Crypto_item:
                 g, y, x = egcd(b % a, a)
                 return (g, x - (b//a) * y, y)
 
-            """Get modInv."""
-            g, x, _ = egcd(a, m)
+            __, x, _ = egcd(a, m)
             return x % m
 
         # Calculate internal variables
@@ -117,3 +120,7 @@ def decrypt(ck):
     plain = pow(cipher, d, n)
 
     return plain
+
+
+if __name__ == "__main__":
+    print("Please use via UI.py")

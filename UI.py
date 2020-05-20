@@ -1,8 +1,13 @@
+# pylint: disable-msg=invalid-name
+
+"""Create GUI element to control encrypt.py."""
+
 from tkinter import *
 from tkinter import filedialog
 from os import environ
 from encrypt import encrypt, decrypt
 from digest import encode, decode
+# filedialog, Label, Button, Text, Entry, Scrollbar, Tk
 
 
 class Initial_IO:
@@ -23,7 +28,6 @@ class Initial_IO:
             self.file_box.delete(0, END)
             self.file_box.insert(0, str(file_explorer()))
 
-
         self.master = master
         self.master.title("Encrypt/Decrypt Files")
         self.master['bg'] = '#f2f2f2'
@@ -32,10 +36,20 @@ class Initial_IO:
         self.file_button = Button(master,
                                 text = "Browse Files",
                                 command = lambda:get_file(self))
-        self.file_button.grid(column=1, row=1, sticky = W)
+        self.file_button.grid(
+                            column=1,
+                            row=1,
+                            sticky = "w"
+                            )
 
         self.file_box = Entry(master)
-        self.file_box.grid(column = 1, ipadx = 70, padx = 85, row = 1, sticky = W)
+        self.file_box.grid(
+                        column = 1,
+                        ipadx = 70,
+                        padx = 85,
+                        row = 1,
+                        sticky = "w"
+                        )
 
         self.encrypt_button = Button(master,
                                     text = "Encrypt",
@@ -43,10 +57,10 @@ class Initial_IO:
                                     )
         self.encrypt_button.grid(
                                 column = 1,
-                                row = 2,
-                                pady = 10,
-                                padx = 90,
-                                sticky = W
+                                row = 1,
+                                # pady = 10,
+                                padx = 360,
+                                sticky = "w"
                                 )
 
         self.decrypt_button = Button(master,
@@ -55,34 +69,52 @@ class Initial_IO:
                                     )
         self.decrypt_button.grid(
                                 column = 1,
-                                row = 2,
-                                pady = 10,
-                                padx = 150,
-                                sticky = W
+                                row = 1,
+                                # pady = 10,
+                                padx = 415,
+                                sticky = "w"
                                 )
 
         self.error_label = Label(master, text = "")
         self.error_label.grid(
                             column = 1,
                             # columnspan = 2,
-                            padx = 250,
+                            padx = 100,
                             row = 2,
-                            sticky = W
+                            sticky = "w"
                             )
 
-        self.output_label = Label(master, text = "Output:")
-        self.output_label.grid(column = 1, row = 3, sticky = W)
+        # self.output_label = Label(master, text = "Output:")
+        # self.output_label.grid(column = 1, row = 2, sticky = "w")
         self.output_text = Text(master, height = 7, width = 50)
-        self.output_text.grid(column = 1, columnspan = 2, pady = 10, padx = 20, row = 3, sticky = W)
+        self.output_text.grid(
+                            column = 1,
+                            columnspan = 2,
+                            pady = 10,
+                            padx = 18,
+                            row = 3,
+                            sticky = "w"
+                            )
         self.output_text_scroll = Scrollbar(master, command = self.output_text.yview)
-        self.output_text_scroll.grid(column = 1, row = 3, sticky = W)
+        self.output_text_scroll.grid(column = 1, row = 3, sticky = "w", ipady = 35)
         self.output_text.configure(yscrollcommand = self.output_text_scroll.set)
+
+        self.quit_button = Button(master, text = "Quit", command = lambda: exit())
+        self.quit_button.grid(
+                            column = 1,
+                            # columnspan = 2,
+                            row = 3,
+                            sticky = "s",
+                            pady = 0,
+                            padx = 100
+                            )
 
     def write_error(self, error=""):
         self.error_label.configure(text = error)
 
     def write_output(self, info=""):
-        self.output_text.insert(END, str(info))
+        output = f"Output:\n{info}"
+        self.output_text.insert(END, str(output))
         
 
     def open_file(self, filename, action, contents=None):
@@ -131,92 +163,35 @@ class Initial_IO:
             self.write_output(self.encrypted)
             self.save_file_path = str(self.save_file_path + self.file_name + "_encrypted.txt")
             self.open_file(self.save_file_path, "w", self.encrypted)
+            self.write_error(f"Successfully encrypted to {self.save_file_path}.")
 
     def init_decrypt(self):
         self.get_save_path()
         self.write_error()
         ciph_file = self.open_file(self.file_box.get(), "r")
-        try:
-            if ciph_file:
-                temp0 = 0
-                temp1 = []
-                for i in ciph_file:
-                    temp0 += 1
-                    if i == ",":
-                        temp1.append(temp0)
-                c = int(ciph_file[0:temp1[0] - 1])
-                d = int(ciph_file[temp1[0]:temp1[1] - 1])
-                n = int(ciph_file[temp1[1]:len(ciph_file)])
-                ck = (c, (d, n))
+        if ciph_file:
+            try:
+                contents = [i.strip() for i in ciph_file.split(",")]
+                ck = (int(contents[0]), (int(contents[1]), int(contents[2])))
+                # temp0 = 0
+                # temp1 = []
+                # for i in ciph_file:
+                #     temp0 += 1
+                #     if i == ",":
+                #         temp1.append(temp0)
+                # c = int(ciph_file[0:temp1[0] - 1])
+                # d = int(ciph_file[temp1[0]:temp1[1] - 1])
+                # n = int(ciph_file[temp1[1]:len(ciph_file)])
+                # ck = (c, (d, n))
+                encoded_text = decrypt(ck)
+                plain_text = decode(encoded_text)
+                decrypted_save_path = self.save_file_path + self.file_name + "_decrypted.txt"
 
-
-            encoded_text = decrypt(ck)
-            plain_text = decode(encoded_text)
-            decrypted_save_path = self.save_file_path + self.file_name + "_decrypted.txt"
-            self.write_output(plain_text)
-            self.open_file(decrypted_save_path, "w", plain_text)
-        except IndexError:
-            self.write_error("Error: Invalid encrypted file")
-
-
-
-
-        
-
-
-
-
-
-    
-    # def __init__(self, master):
-    #     """Initialize IO."""
-    #     self.master = master
-    #     self.master.title("Encrypt/Decrypt Files")
-
-    #     self.name_Box = Entry(master)
-    #     self.name_Box.grid(column=2, row=4)
-
-    #     self.name_Label = Label(text="Name:")
-    #     self.name_Label.grid(column=1, row=4)
-
-
-    #     self.top_Text = Label(master, text="Please select a dog size:")
-    #     self.top_Text.grid(column=2, row=1)
-
-    #     self.lg_Button = Button(master, text="Large",
-    #                             command=lambda *args: dogtalk(
-    #                                                         self, size="large"
-    #                                                         ))
-    #     self.lg_Button.grid(column=1, row=2)
-
-    #     self.md_Button = Button(master, text="Medium",
-    #                             command=lambda *args: dogtalk(
-    #                                                         self, size="medium"
-    #                                                         ))
-    #     self.md_Button.grid(column=2, row=2)
-
-    #     self.sm_Button = Button(master, text="Small",
-    #                             command=lambda *args: dogtalk(
-    #                                                         self, size="small"
-    #                                                         ))
-    #     self.sm_Button.grid(column=3, row=2)
-
-    #     self.responce = Label(master)
-    #     self.responce.grid(column=2, row=5)
-
-    #     self.goodbye = Label(text="Dog says goodbye")
-    #     self.quit = Button(master, text="Quit",
-    #                        command=self.quitfun).grid(column=10, row=10)
-
-    #     def dogtalk(self, size):
-    #         self.outputdog.config(text=make_Dog(size, self.name_Box.get()))
-    #         self.outputdog.grid(column=2, row=6)
-
-    # def quitfun(self):
-    #     """Quit program."""
-    #     self.outputdog.destroy()
-    #     self.goodbye.grid(column=2, row=6)
-    #     self.master.after(2000, lambda: self.master.destroy())
+                self.write_output(plain_text)
+                self.open_file(decrypted_save_path, "w", plain_text)
+                self.write_error(f"Successfully decrypted to {decrypted_save_path}.")
+            except IndexError:
+                self.write_error("Error: Invalid encrypted file")
 
 
 def main():
