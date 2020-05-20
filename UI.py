@@ -79,7 +79,7 @@ class Initial_IO:
         self.error_label.grid(
                             column = 1,
                             # columnspan = 2,
-                            padx = 100,
+                            padx = 20,
                             row = 2,
                             sticky = "w"
                             )
