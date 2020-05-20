@@ -138,6 +138,8 @@ class Initial_IO:
             except OSError:
                 self.write_error("Error: Invalid file location")
                 return False
+            except UnicodeDecodeError:
+                self.write_error("Error: Invalid file type")
 
     def get_save_path(self):
         self.file_path = self.file_box.get()
