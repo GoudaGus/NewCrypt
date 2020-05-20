@@ -13,8 +13,8 @@ from digest import encode, decode
 class Initial_IO:
     """Create IO."""
     def __init__(self, master):
-
         def file_explorer():
+            # Open file explorer
             filename = filedialog.askopenfilename(
                     initialdir=f"{environ['USERPROFILE']}/Documents",
                     title="Select File",
@@ -25,9 +25,10 @@ class Initial_IO:
             return filename
             
         def get_file(self):
+            # Set a text box to file location from file_explorer()
             self.file_box.delete(0, END)
             self.file_box.insert(0, str(file_explorer()))
-
+        # Create main window
         self.master = master
         self.master.title("Encrypt/Decrypt Files")
         self.master['bg'] = '#f2f2f2'
